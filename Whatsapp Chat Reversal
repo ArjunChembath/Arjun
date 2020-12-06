@@ -1,0 +1,82 @@
+function sendMsg(msg){
+    /* Funtion written to get text box element */
+    var textboxObj = document.getElementsByClassName("_1awRl copyable-text selectable-text")
+    /* _1awRl copyable-text selectable-text is obtained from Whatsapp Web chat using Inspect Element
+       0 is 'search or start new chat' 
+       1 is 'Type a message'
+    */
+
+    InputEvent = Event || InputEvent;
+    var evt = new InputEvent('input', {	// Create a new event from type "input"
+         bubbles: true,
+	    composer: true
+    });
+
+    /* type the message */
+    textboxObj[1].innerText = msg
+
+    /* Send the Inpupt event */
+    textboxObj[1].dispatchEvent(evt)
+    
+    /* Get Send msg element */
+    var sendButtonObj = document.getElementsByClassName("_2Ujuu")
+    /* _2Ujuu is obtained from Whatsapp Web chat using Inspect Element*/
+        
+    
+    /*Send msg*/
+    sendButtonObj[0].click()
+}
+
+// z_tTQ - message list
+function readLastMsg(){
+    /* Get Object of all messages in the active chat */
+    var messageListObj = document.getElementsByClassName("tSmQ1")
+    /* get the last message in chat*/
+    lastMsg = messageListObj[0].lastElementChild.innerText
+    /*make array out of the message*/
+    lastMsg = lastMsg.split("\n")
+    /* Find length,
+    if len = 1, no text only time stamp*/
+    if(lastMsg.length < 1){
+        /* return empty string */
+        return ""
+    }
+    else{
+        return lastMsg[lastMsg.length-2]
+    }
+}
+
+function reverse(s){
+    return s.split("").reverse().join("");
+}
+
+function startPolling() {
+    intervalhandle = setInterval(function() {
+        fakemain();
+    }, 1000)
+}
+
+let lastMessage = []
+let globalcount = 0
+
+function fakemain(){
+    
+    if(globalcount == 0){
+    lastMessage[0] = readLastMsg()
+    }
+
+    globalcount = globalcount+1
+
+    lastMessage[1] = readLastMsg()
+
+    if(lastMessage[0] != lastMessage[1]){
+        sendMsg(reverse(lastMessage[1]))
+        lastMessage[0] = reverse(lastMessage[1])
+        }
+
+    if(globalcount > 500){
+        console.log("Session completed ...")
+        clearInterval(intervalhandle)
+        console.log(status)
+    }
+}
